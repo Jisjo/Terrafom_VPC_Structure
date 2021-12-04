@@ -4,7 +4,7 @@
 ## Result
 
 ``` hcl
-jisjo@jisjo ~$ terraform apply
+jisjo@jisjo~$ terraform apply
 
 Terraform used the selected providers to generate the following execution plan. Resource actions are indicated with the
 following symbols:
@@ -298,7 +298,7 @@ Terraform will perform the following actions:
   + resource "aws_subnet" "private3" {
       + arn                             = (known after apply)
       + assign_ipv6_address_on_creation = false
-      + availability_zone               = "ap-south-1b"
+      + availability_zone               = "ap-south-1c"
       + availability_zone_id            = (known after apply)
       + cidr_block                      = "172.16.160.0/19"
       + id                              = (known after apply)
@@ -354,35 +354,35 @@ Do you want to perform these actions?
 
 aws_eip.eip: Creating...
 aws_vpc.vpc: Creating...
-aws_eip.eip: Creation complete after 0s [id=eipalloc-03a904f389033da6e]
+aws_eip.eip: Creation complete after 1s [id=eipalloc-01889235ea3383a24]
 aws_vpc.vpc: Still creating... [10s elapsed]
-aws_vpc.vpc: Creation complete after 15s [id=vpc-0f1b0d2eb6d4d8d21]
-aws_internet_gateway.igw: Creating...
+aws_vpc.vpc: Creation complete after 13s [id=vpc-0da06cafca2c6324e]
 aws_subnet.private3: Creating...
-aws_subnet.Public2: Creating...
-aws_subnet.private2: Creating...
-aws_subnet.private1: Creating...
 aws_subnet.Public1: Creating...
 aws_subnet.Public3: Creating...
-aws_subnet.private2: Creation complete after 1s [id=subnet-0e9c06b6b98be1198]
-aws_subnet.private1: Creation complete after 1s [id=subnet-0f57d9e75379f0fd3]
-aws_subnet.private3: Creation complete after 1s [id=subnet-022196043cc312ce4]
-aws_internet_gateway.igw: Creation complete after 1s [id=igw-04ea7c642ceaa66a9]
+aws_internet_gateway.igw: Creating...
+aws_subnet.private1: Creating...
+aws_subnet.private2: Creating...
+aws_subnet.Public2: Creating...
+aws_subnet.private3: Creation complete after 1s [id=subnet-0e02cef9007eeb787]
+aws_subnet.private2: Creation complete after 1s [id=subnet-0b6d0d2d1b0f5d4ce]
+aws_subnet.private1: Creation complete after 1s [id=subnet-0fab3a6e6a619a281]
+aws_internet_gateway.igw: Creation complete after 1s [id=igw-05ebe0e699a405db6]
 aws_route_table.public: Creating...
-aws_route_table.public: Creation complete after 3s [id=rtb-0997a34b80b0acd1d]
-aws_subnet.Public2: Still creating... [10s elapsed]
-aws_subnet.Public1: Still creating... [10s elapsed]
+aws_route_table.public: Creation complete after 2s [id=rtb-0cc4fa4f636f57d54]
 aws_subnet.Public3: Still creating... [10s elapsed]
-aws_subnet.Public3: Creation complete after 12s [id=subnet-0381fe3342085f298]
+aws_subnet.Public1: Still creating... [10s elapsed]
+aws_subnet.Public2: Still creating... [10s elapsed]
+aws_subnet.Public3: Creation complete after 12s [id=subnet-0f0cab56acdf717eb]
+aws_subnet.Public2: Creation complete after 12s [id=subnet-017c1b257a5787fd7]
+aws_subnet.Public1: Creation complete after 12s [id=subnet-02ef2bc638307c999]
 aws_route_table_association.public3: Creating...
-aws_subnet.Public1: Creation complete after 12s [id=subnet-02b9cdecd96c4fcba]
-aws_route_table_association.public1: Creating...
-aws_subnet.Public2: Creation complete after 12s [id=subnet-044243c3943343d87]
 aws_route_table_association.public2: Creating...
+aws_route_table_association.public1: Creating...
 aws_nat_gateway.nat: Creating...
-aws_route_table_association.public3: Creation complete after 1s [id=rtbassoc-0a8efe7a2cd531a06]
-aws_route_table_association.public2: Creation complete after 1s [id=rtbassoc-0409bae66025f6853]
-aws_route_table_association.public1: Creation complete after 1s [id=rtbassoc-091c64999a463966b]
+aws_route_table_association.public2: Creation complete after 0s [id=rtbassoc-051c99d499ad26d28]
+aws_route_table_association.public1: Creation complete after 1s [id=rtbassoc-0bef30d30ecd71aa5]
+aws_route_table_association.public3: Creation complete after 1s [id=rtbassoc-04c98d66cdda520d4]
 aws_nat_gateway.nat: Still creating... [10s elapsed]
 aws_nat_gateway.nat: Still creating... [20s elapsed]
 aws_nat_gateway.nat: Still creating... [30s elapsed]
@@ -392,15 +392,17 @@ aws_nat_gateway.nat: Still creating... [1m0s elapsed]
 aws_nat_gateway.nat: Still creating... [1m10s elapsed]
 aws_nat_gateway.nat: Still creating... [1m20s elapsed]
 aws_nat_gateway.nat: Still creating... [1m30s elapsed]
-aws_nat_gateway.nat: Creation complete after 1m39s [id=nat-01b284c93caf8117d]
+aws_nat_gateway.nat: Still creating... [1m40s elapsed]
+aws_nat_gateway.nat: Still creating... [1m50s elapsed]
+aws_nat_gateway.nat: Creation complete after 1m57s [id=nat-01508cd8fd3a6e5fe]
 aws_route_table.private: Creating...
-aws_route_table.private: Creation complete after 2s [id=rtb-09a66e21b6b91549f]
-aws_route_table_association.private3: Creating...
-aws_route_table_association.private2: Creating...
+aws_route_table.private: Creation complete after 2s [id=rtb-0a14adb04934fb935]
 aws_route_table_association.private1: Creating...
-aws_route_table_association.private2: Creation complete after 1s [id=rtbassoc-04cad8b07f1ca7563]
-aws_route_table_association.private3: Creation complete after 1s [id=rtbassoc-04db27085f34e4d6c]
-aws_route_table_association.private1: Creation complete after 1s [id=rtbassoc-0cf292311d4007e51]
+aws_route_table_association.private2: Creating...
+aws_route_table_association.private3: Creating...
+aws_route_table_association.private2: Creation complete after 1s [id=rtbassoc-0acce234a73945551]
+aws_route_table_association.private3: Creation complete after 1s [id=rtbassoc-0f2f2eb9076a7d5db]
+aws_route_table_association.private1: Creation complete after 1s [id=rtbassoc-065282c04b7d15843]
 
 Apply complete! Resources: 18 added, 0 changed, 0 destroyed.
 ```
