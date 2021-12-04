@@ -1,4 +1,5 @@
-# terrafom_VPC_private_and_public_subnets
+# Terrafom_VPC_Structure
+
 
 
 ## Result
