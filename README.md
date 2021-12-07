@@ -1,8 +1,254 @@
 # Terrafom_VPC_Structure
 
-Here is a simple project on how to create a custom vpc with 
+Here is a simple project to create a cutom VPC setup with Elastic IP, NAT Gatway, Internet Gatway and 3 private and public subnet with auto calculating its subnets. This script will run any region.
 
-## Result
+## Resources Used
+
+- 3 Public Subnet
+- 3 Private Subnet
+- Internet Gateway
+- NAT Gateway
+- 2 Route Tables (Private and Public)
+- 1 Elastic IP
+
+## Features
+
+- Fully Automated creation of VPC 
+- It can be deployed in any region and will be fetching the available zones in that region automatically using data source AZ. 
+- Public and private subnets will be deployed in each AZ in an automated way.
+- Every subnet CIDR block has been calculated automatically using cidrsubnet function
+- Whole project can be managed from a single file (vpc.tf) which means selecting the region, changing the whole project name, selecting VPC, and subnetting.
+
+## Prerequisites
+
+- Knowledge in AWS services, especially VPC, subnetting
+- IAM user with necessary privileges. 
+
+## Procedure
+
+### Terrafom_VPC_Structure/variables.tf
+
+
+At first we need to create a variable file named "variable.tf" whch includes the following
+-region
+-projectname
+-cidr block(Here I have taken the VPC CIDR as 172.16.0.0/16 and subnetcidr as 3 for my project, for the creation of a total of 6 subnets (3 - public and 3private)
+
+For the above-mentioned variables, values are passed into the file vpc.
+
+### Terrafom_VPC_Structure/provider.tf
+
+Next we need to create a provider.tf file and which includes the region,accesskey and secret key. Since I'm testing with local PC, I'm using key based aauthentication. If you are running in a instance, you can use **IAM ROLE** It is more secure and easy to impliment.
+
+Once the provider and variables files ready, we can move to create VPC in vpc.tf
+
+## Terrafom_VPC_Structure/main.tf
+
+Here we are creating main part of the infra.
+
+**1. Fetching AZ Names**
+
+Here we grabbing AZ name to assing to subnet.
+
+**2. VPC Creation**
+
+Once the VPC is created, we can now proceed with the craetion of Internet Gateway(IGW)
+
+**3. Attaching Internet GateWay**
+ 
+In the next part, we need to subnets and here am going to create 3 public subnets and 3 private subnets
+
+**4. Elatic Ip Allocation**
+Creating elastic IP for NAT Gateway
+
+**5. Creating Nat GateWay**
+
+### Terrafom_VPC_Structure/subnet.tf 
+
+**1. Creating Subnets Public1**
+
+**2.Creating Subnets Public2**
+
+**3. eating Subnets Public3**
+
+**4. ting Subnets Private1**
+
+**5. ating Subnets Private2
+```
+resource "aws_subnet" "private2" {
+    
+  vpc_id                   = aws_vpc.vpc.id
+  cidr_block               = cidrsubnet(var.vpc_cidr,3,4)
+  map_public_ip_on_launch  = false
+  availability_zone        = data.aws_availability_zones.az.names[1]
+  tags = {
+    Name = "${var.project}-private2"
+    project = var.project
+  }
+}
+```
+### Creating Subnets Private3
+```
+resource "aws_subnet" "private3" {
+    
+  vpc_id                   = aws_vpc.vpc.id
+  cidr_block               = cidrsubnet(var.vpc_cidr,3,5)
+  map_public_ip_on_launch  = false
+  availability_zone        = data.aws_availability_zones.az.names[2]
+  tags = {
+    Name = "${var.project}-private3"
+    project = var.project
+  }
+}
+```
+In order to configure private route table, we need to setup NAT Gateway and Elastic IP 
+### Creating Nat GateWay
+```
+resource "aws_nat_gateway" "nat" {
+    
+  allocation_id = aws_eip.eip.id
+  subnet_id     = aws_subnet.public2.id
+
+  tags     = {
+    Name    = "${var.project}-nat"
+    project = var.project
+  }
+
+}
+```
+### Elastic IP Allocation
+```
+resource "aws_eip" "eip" {
+  vpc      = true
+  tags     = {
+    Name    = "${var.project}-nat-eip"
+    project = var.project
+  }
+}
+```
+
+Next we need to route the subnets for that we need to create the public and private route table and association
+
+### RouteTable Creation public
+```
+resource "aws_route_table" "public" {
+    
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.igw.id
+  }
+
+  tags     = {
+    Name    = "${var.project}-route-public"
+    project = var.project
+  }
+}
+```
+### RouteTable Creation Private
+```
+resource "aws_route_table" "private" {
+    
+  vpc_id = aws_vpc.vpc.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat.id
+  }
+
+  tags     = {
+    Name    = "${var.project}-route-private"
+    project = var.project
+  }
+}
+```
+### RouteTable Association Subnet Public1  rtb public
+```
+resource "aws_route_table_association" "public1" {
+  subnet_id      = aws_subnet.public1.id
+  route_table_id = aws_route_table.public.id
+}
+```
+### RouteTable Association Subnet Public2  rtb public
+```
+resource "aws_route_table_association" "public2" {
+  subnet_id      = aws_subnet.public2.id
+  route_table_id = aws_route_table.public.id
+}
+```
+### RouteTable Association Subnet Public3  rtb public
+```
+resource "aws_route_table_association" "public3" {
+  subnet_id      = aws_subnet.public3.id
+  route_table_id = aws_route_table.public.id
+}
+```
+### RouteTable Association Subnet Private1  rtb public
+```
+resource "aws_route_table_association" "private1" {
+  subnet_id      = aws_subnet.private1.id
+  route_table_id = aws_route_table.private.id
+}
+```
+### RouteTable Association Subnet private2  rtb public
+```
+resource "aws_route_table_association" "private2" {
+  subnet_id      = aws_subnet.private2.id
+  route_table_id = aws_route_table.private.id
+}
+```
+### RouteTable Association Subnet private3  rtb public
+```
+resource "aws_route_table_association" "private3" {
+  subnet_id      = aws_subnet.private3.id
+  route_table_id = aws_route_table.private.id
+}
+```
+
+Now the creation of VPC is completed.
+
+### Terraform Installation 
+
+- Clone the git repo and proceed with the installation of terraform if it has not been installed, otherwise ignore this step. Change the permission of the script - install.sh to executable and execute the bash script for the installation. 
+
+- For Manual Proccedure 
+
+- For Downloading -  [Terraform](https://www.terraform.io/downloads.html) 
+
+- Installation Steps -  [Installation](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started)
+
+
+After completing these,  initialize the working directory for Terraform configuration using the below command
+
+```sh
+terraform init
+```
+- Validate the terraform file using the command given below.
+
+```sh
+ terraform validate
+```
+- After successful validation, plan the build architecture and confirm the changes
+
+```sh
+ terraform plan
+```
+- Apply the changes to the AWS architecture
+
+Then need to apply the below command
+
+```sh
+ terraform apply
+```
+
+
+
+
+
+
+
+
 
 ``` hcl
 jisjo@jisjo~$ terraform apply
