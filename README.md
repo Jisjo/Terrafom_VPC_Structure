@@ -59,6 +59,7 @@ Once the VPC is created, we can now proceed with the craetion of Internet Gatewa
 In the next part, we need to subnets and here am going to create 3 public subnets and 3 private subnets
 
 **4. Elatic Ip Allocation**
+
 Creating elastic IP for NAT Gateway
 
 **5. Creating Nat GateWay**
@@ -67,146 +68,44 @@ Creating elastic IP for NAT Gateway
 
 **1. Creating Subnets Public1**
 
-**2.Creating Subnets Public2**
+**2. Creating Subnets Public2**
 
-**3. eating Subnets Public3**
+**3. Creating Subnets Public3**
 
-**4. ting Subnets Private1**
+**4. Creating Subnets Private1**
 
-**5. ating Subnets Private2
-```
-resource "aws_subnet" "private2" {
-    
-  vpc_id                   = aws_vpc.vpc.id
-  cidr_block               = cidrsubnet(var.vpc_cidr,3,4)
-  map_public_ip_on_launch  = false
-  availability_zone        = data.aws_availability_zones.az.names[1]
-  tags = {
-    Name = "${var.project}-private2"
-    project = var.project
-  }
-}
-```
-### Creating Subnets Private3
-```
-resource "aws_subnet" "private3" {
-    
-  vpc_id                   = aws_vpc.vpc.id
-  cidr_block               = cidrsubnet(var.vpc_cidr,3,5)
-  map_public_ip_on_launch  = false
-  availability_zone        = data.aws_availability_zones.az.names[2]
-  tags = {
-    Name = "${var.project}-private3"
-    project = var.project
-  }
-}
-```
-In order to configure private route table, we need to setup NAT Gateway and Elastic IP 
-### Creating Nat GateWay
-```
-resource "aws_nat_gateway" "nat" {
-    
-  allocation_id = aws_eip.eip.id
-  subnet_id     = aws_subnet.public2.id
+**5. Creating Subnets Private2**
 
-  tags     = {
-    Name    = "${var.project}-nat"
-    project = var.project
-  }
+**6. Creating Subnets Private3**
 
-}
-```
-### Elastic IP Allocation
-```
-resource "aws_eip" "eip" {
-  vpc      = true
-  tags     = {
-    Name    = "${var.project}-nat-eip"
-    project = var.project
-  }
-}
-```
 
-Next we need to route the subnets for that we need to create the public and private route table and association
+## Terrafom_VPC_Structure/route_table.tf 
 
-### RouteTable Creation public
-```
-resource "aws_route_table" "public" {
-    
-  vpc_id = aws_vpc.vpc.id
+**1. RouteTable Creation public**
 
-  route {
-    cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.igw.id
-  }
+**2. RouteTable Creation Private**
 
-  tags     = {
-    Name    = "${var.project}-route-public"
-    project = var.project
-  }
-}
-```
-### RouteTable Creation Private
-```
-resource "aws_route_table" "private" {
-    
-  vpc_id = aws_vpc.vpc.id
+**3. RouteTable Association Subnet Public1  rtb public**
 
-  route {
-    cidr_block     = "0.0.0.0/0"
-    nat_gateway_id = aws_nat_gateway.nat.id
-  }
+**4. RouteTable Association Subnet Public2  rtb public**
 
-  tags     = {
-    Name    = "${var.project}-route-private"
-    project = var.project
-  }
-}
-```
-### RouteTable Association Subnet Public1  rtb public
-```
-resource "aws_route_table_association" "public1" {
-  subnet_id      = aws_subnet.public1.id
-  route_table_id = aws_route_table.public.id
-}
-```
-### RouteTable Association Subnet Public2  rtb public
-```
-resource "aws_route_table_association" "public2" {
-  subnet_id      = aws_subnet.public2.id
-  route_table_id = aws_route_table.public.id
-}
-```
-### RouteTable Association Subnet Public3  rtb public
-```
-resource "aws_route_table_association" "public3" {
-  subnet_id      = aws_subnet.public3.id
-  route_table_id = aws_route_table.public.id
-}
-```
-### RouteTable Association Subnet Private1  rtb public
-```
-resource "aws_route_table_association" "private1" {
-  subnet_id      = aws_subnet.private1.id
-  route_table_id = aws_route_table.private.id
-}
-```
-### RouteTable Association Subnet private2  rtb public
-```
-resource "aws_route_table_association" "private2" {
-  subnet_id      = aws_subnet.private2.id
-  route_table_id = aws_route_table.private.id
-}
-```
-### RouteTable Association Subnet private3  rtb public
-```
-resource "aws_route_table_association" "private3" {
-  subnet_id      = aws_subnet.private3.id
-  route_table_id = aws_route_table.private.id
-}
-```
+**5. RouteTable Association Subnet Public3  rtb public**
+
+**6. RouteTable Association Subnet Private1  rtb public**
+
+**7. RouteTable Association Subnet private2  rtb public**
+
+**8. RouteTable Association Subnet private3  rtb public**
+
 
 Now the creation of VPC is completed.
+
+
+
+
+
+
+
 
 ### Terraform Installation 
 
